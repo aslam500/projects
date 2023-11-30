@@ -1,96 +1,50 @@
-"""Video recorder for Selenium WebDriver."""
+from bardapi import Bard
+import os
+import requests
+import json
 
-import threading
+os.environ['_BARD_API_KEY']="dQh7a2VL72hAjugeTpFd5Nbqj6rDSHK1Lyh-tRBnlyY_593F3uD1xFH-UxkCnbyvw1fSsw."
 
-import gi
+def Comment(file_path):
+    
+    session = requests.Session()
+    session.headers = {
+                "Host": "bard.google.com",
+                "X-Same-Domain": "1",
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36",
+                "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+                "Origin": "https://bard.google.com",
+                "Referer": "https://bard.google.com/",
+            }
+    session.cookies.set("__Secure-1PSID", os.getenv("_BARD_API_KEY")) 
 
-gi.require_version("Gst", "1.0")
-from gi.repository import Gst
+    bard = Bard(token=os.environ['_BARD_API_KEY'], session=session, timeout=30)
 
-Gst.init(None)
+    while True:
+        # message = str(input("Prompt:[COMMENT|DOCUMENT: ] "))
+        message = "comment"
+        _message = message.lower()
+        if _message=="comment":
+            _code = open('./gpt.py')
+            code = _code.read()
+            _code.close()
+            prompt ="Comment the code above"
+            final_message = str(code)+"\n"+prompt
+            try:
+                answer = bard.get_answer(final_message)
+                final_answer = answer['content'].split("\n")
+                return final_answer,True
+                # with open("./output.py",'w') as write_file:
+                #     store=answer['content'].split("\n")
+                #     for i in range(1,len(store)):
+                #         write_file.write(store[i]+"\n")
+            except Exception as e:
+                return "",False
+            
 
-
-class VideoRecorder(object):
-
-    def __init__(  # pylint: disable=too-many-arguments
-            self, driver, filename="video.webm", framerate="25/1",
-            width=None, height=None):
-        self.driver = driver
-        _patch_driver(self.driver)
-
-        if filename and not filename.endswith(".webm"):
-            filename += ".webm"
-
-        caps = ["video/x-raw", "framerate={}".format(framerate)]
-        if width:
-            caps.append("width={}".format(width))
-        if height:
-            caps.append("height={}".format(height))
-
-        elements = [
-            "appsrc name=src is-live=true do-timestamp=true caps=image/png",
-            "pngdec",
-            "videoconvert",
-            "videorate",
-            "videocrop name=crop",
-            ",".join(caps),
-            "queue"]
-        if filename:
-            elements += [
-                "vp8enc",
-                "webmmux",
-                "filesink location={}".format(filename)]
+            
         else:
-            elements.append("autovideosink sync=false")
-        self._pipeline = Gst.parse_launch(" ! ".join(elements))
-
-        self._appsrc = self._pipeline.get_by_name("src")
-        self._appsrc.connect("need-data", self._push_screenshot)
-
-        videocrop = self._pipeline.get_by_name("crop")
-        if width:
-            videocrop.set_property("right", -1)  # Auto-crop
-        if height:
-            videocrop.set_property("bottom", -1)  # Auto-crop
-
-    def start(self):
-        """Start video recording."""
-        self._pipeline.set_state(Gst.State.PLAYING)
-
-    def stop(self):
-        """Stop video recording."""
-        self._appsrc.emit("end-of-stream")
-        self._pipeline.set_state(Gst.State.NULL)
-
-    def _push_screenshot(self, *_):
-        """Emit a WebDriver screenshot from appsrc."""
-        self._appsrc.emit(
-            "push-buffer",
-            Gst.Buffer.new_wrapped(self.driver.get_screenshot_as_png()))
+            return "",False
 
 
-def VideoViewer(*args, **kwargs):
-    """Shorthand for `VideoRecorder(filename=None)`.
-
-    Useful with PhantomJS.
-    """
-    kwargs["filename"] = None
-    return VideoRecorder(*args, **kwargs)
-
-
-def _patch_driver(driver):
-    """Prevent failures caused by concurrent connections to the remote
-    WebDriver.
-
-    Another option would be to use a WebDriver proxy. Monkey patching `driver`
-    is simpler, though more hacky.
-    """
-    lock = threading.Lock()
-    execute_unsafe = driver.execute
-
-    def execute_safe(driver_command, params=None):
-        with lock:
-            return execute_unsafe(driver_command, params)
-
-    driver.execute = execute_safe
 
