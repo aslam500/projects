@@ -1,5 +1,6 @@
-import os
-
+import os  # Imports the os module
+import subprocess  # Imports the subprocess module
+import random  # Imports the random module
 
 def function():
     """
@@ -16,7 +17,7 @@ def function():
         # If 'something' is not True, print 'nothing'
         print('nothing')
 
-
 if __name__ == "__main__":
     # Calls the function to print the message.
     function()
+
