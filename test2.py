@@ -1,7 +1,12 @@
+import os
+
+
 def function():
-    # This function prints "Hello, world!" to the console.
-    name = "aslam khan"
-    something = False
+    """
+    This function prints a message to the console based on the value of the 'something' variable.
+    """
+    name = "aslam khan"  # Variable to store the name
+    something = False  # Variable to store a boolean value
 
     # Check if the value of 'something' is True
     if something:
@@ -11,7 +16,7 @@ def function():
         # If 'something' is not True, print 'nothing'
         print('nothing')
 
+
 if __name__ == "__main__":
     # Calls the function to print the message.
     function()
-

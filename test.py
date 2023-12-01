@@ -11,6 +11,8 @@ import requests
 import json
 
 # Set the Bard API key as an environment variable
+# This is done to avoid exposing the API key in the code
+import subprocess
 os.environ['_BARD_API_KEY'] = "YOUR_BARD_API_KEY"
 
 
@@ -27,9 +29,11 @@ def Comment(file_path):
     """
 
     # Initialize a requests session to maintain connections and cookies
+    # This is done to improve performance and avoid making multiple connections
     session = requests.Session()
 
     # Set the HTTP headers for the requests to interact with the Bard API
+    # These headers provide information about the request and improve communication with the API
     session.headers = {
         "Host": "bard.google.com",  # Specify the server hostname
         "X-Same-Domain": "1",  # Inform the server that requests are from the same domain
@@ -40,20 +44,25 @@ def Comment(file_path):
     }
 
     # Set the Bard API key as a cookie in the session for authentication
+    # This is done to identify the user and provide access to the Bard API
     session.cookies.set("__Secure-1PSID", os.getenv("_BARD_API_KEY"))
 
     # Create a Bard instance using the API key and session to interact with the Bard API
+    # This instance will be used to send requests to the Bard API and receive responses
     bard = Bard(token=os.environ['_BARD_API_KEY'], session=session, timeout=30)
 
     # Read the code from the specified file path
+    # This is done to access the code that needs to be commented
     with open(file_path, 'r') as code_file:
         code = code_file.read()
 
     # Prepare the prompt for Bard by combining code and request
+    # The prompt tells Bard what to do with the provided code
     prompt = "Comment the code above"
     final_message = code + "\n" + prompt
 
     # Send the request to Bard and get the response using the Bard instance
+    # This is done to send the prompt to Bard and receive the generated comments
     try:
         answer = bard.get_answer(final_message)
         final_answer = answer['content'].split("\n")
@@ -66,3 +75,4 @@ def Comment(file_path):
 
 # Print the greeting message
 print("Hello world")
+
