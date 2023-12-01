@@ -1,13 +1,31 @@
-from bardapi import Bard  # Import the Bard API library
-import os  # Import the os module for file system operations
-import requests  # Import the requests library for making HTTP requests
-import json  # Import the json module for working with JSON data
+# Import the Bard API library
+from bardapi import Bard
+
+# Import the os module for file system operations
+import os
+
+# Import the requests library for making HTTP requests
+import requests
+
+# Import the json module for working with JSON data
+import json
 
 # Set the Bard API key as an environment variable
-os.environ['_BARD_API_KEY'] = "dQh7a2VL72hAjugeTpFd5Nbqj6rDSHK1Lyh-tRBnlyY_593F3uD1xFH-UxkCnbyvw1fSsw."
+os.environ['_BARD_API_KEY'] = "YOUR_BARD_API_KEY"
 
 
 def Comment(file_path):
+    """
+    This function takes a file path as input and returns the commented code.
+    It uses the Bard API to generate comments for the code.
+
+    Args:
+        file_path (str): The path to the file containing the code to be commented.
+
+    Returns:
+        list[str]: A list of commented code lines.
+    """
+
     # Initialize a requests session to maintain connections and cookies
     session = requests.Session()
 
@@ -27,40 +45,24 @@ def Comment(file_path):
     # Create a Bard instance using the API key and session to interact with the Bard API
     bard = Bard(token=os.environ['_BARD_API_KEY'], session=session, timeout=30)
 
-    # Continuously loop until the user exits or the condition is not met
-    while True:
-        # Prompt the user to enter a message to determine the action
-        message = str(input("Prompt: [COMMENT|DOCUMENT: ] "))
+    # Read the code from the specified file path
+    with open(file_path, 'r') as code_file:
+        code = code_file.read()
 
-        # Check if the message is "comment" to proceed with code commenting
-        if message.lower() == "comment":
-            # Read the code from the specified file path
-            with open('./gpt.py') as code_file:
-                code = code_file.read()  # Read the entire code content
+    # Prepare the prompt for Bard by combining code and request
+    prompt = "Comment the code above"
+    final_message = code + "\n" + prompt
 
-            # Prepare the prompt for Bard by combining code and request
-            prompt = "Comment the code above"
-            final_message = str(code) + "\n" + prompt  # Concatenate code and prompt
+    # Send the request to Bard and get the response using the Bard instance
+    try:
+        answer = bard.get_answer(final_message)
+        final_answer = answer['content'].split("\n")
+    except Exception as e:
+        print(e)
+        return []
 
-            # Send the request to Bard and get the response using the Bard instance
-            try:
-                # Call the Bard API and store the response in the 'answer' variable
-                answer = bard.get_answer(final_message)
-
-                # Extract the response content from the 'answer' dictionary
-                final_answer = answer['content'].split("\n")  # Split response content into lines
-
-                # Return the processed response and indicate success
-                return final_answer, True  # Return the response lines and success flag
-
-            except Exception as e:  # Handle any exceptions that occur during API calls
-                print(e)  # Print the error message
-                return "", False  # Return an empty string and failure flag
-
-        else:
-            # If the message is not "comment", return an empty string and False
-            return "", False  # Return empty response and failure flag
+    # Return the processed response and indicate success
+    return final_answer
 
 # Print the greeting message
 print("Hello world")
-
