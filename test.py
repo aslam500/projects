@@ -1,6 +1,6 @@
 # Import the Bard API library
 from bardapi import Bard
-
+import sys
 # Import the os module for file system operations
 import os
 
