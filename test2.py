@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd 
 import itertools
 import re
+import string
 def function():
     """
     This function prints a message to the console based on the value of the 'something' variable.
