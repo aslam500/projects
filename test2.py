@@ -1,5 +1,6 @@
 def function():
     # This function prints "Hello, world!" to the console.
+    name = "aslam khan"
     something = False
 
     # Check if the value of 'something' is True
