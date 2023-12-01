@@ -10,7 +10,7 @@ import requests
 
 # Import the json module for working with JSON data
 import json
-
+import re
 # Set the Bard API key as an environment variable
 # This is done to avoid exposing the API key in the code
 os.environ['_BARD_API_KEY'] = "YOUR_BARD_API_KEY"
