@@ -3,7 +3,7 @@ from bardapi import Bard
 import sys
 import random
 # Import the os module for file system operations
-#import os
+import os
 import itertools
 # Import the requests library for making HTTP requests
 import requests
