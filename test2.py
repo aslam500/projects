@@ -1,6 +1,6 @@
 def function():
     # This function prints "Hello, world!" to the console.
-    something = True
+    something = False
 
     # Check if the value of 'something' is True
     if something:
