@@ -13,7 +13,6 @@ import json
 
 # Set the Bard API key as an environment variable
 # This is done to avoid exposing the API key in the code
-import subprocess
 os.environ['_BARD_API_KEY'] = "YOUR_BARD_API_KEY"
 
 

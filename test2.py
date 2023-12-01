@@ -4,7 +4,6 @@ import random  # Imports the random module
 import numpy as np
 import pandas as pd 
 import itertools
-import re
 import string
 def function():
     """
