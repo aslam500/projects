@@ -1,3 +1,4 @@
+import subprocess
 def add_comments_before_commit():
     changed_files = subprocess.check_output(['git', 'diff', '--name-only', '--cached']).decode('utf-8').splitlines()
     print(changed_files)
