@@ -2,7 +2,6 @@
 import cv2 as cv
 import os
 import shutil
-import sys
 # This function takes two image paths, a minimum and maximum shape size,
 # and calculates the shapes in the images, saving them to separate folders.
 def calculate_subfs(image_path1, image_path2, min_shape_size, max_shape_size):
