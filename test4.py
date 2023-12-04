@@ -1,4 +1,5 @@
-#aslam
+
+```python
 import cv2 as cv
 import os
 import shutil
@@ -58,7 +59,7 @@ def detect_and_save_shapes(image_path, output_folder, min_shape_size, max_shape_
     for contour in contours:
 
         # Calculate the perimeter approximation accuracy.
-        epsilon = 0.04 * cv.arcLength(contour, True)
+        epsilon = 0.04 * cv2.arcLength(contour, True)
 
         # Simplify the contour and get the number of vertices.
         approx = cv2.approxPolyDP(contour, epsilon, True)
@@ -93,5 +94,4 @@ def detect_and_save_shapes(image_path, output_folder, min_shape_size, max_shape_
                 else:
                     shape_name = "Circle"
 
-                # Generate a unique filename for the shape based on its type and count.
-                # shape_filename = os
+                # Generate a unique filename
