@@ -1,7 +1,10 @@
+#aslam
 import cv2 as cv
 import os
 import shutil
 import sys
+import sys
+
 # This function takes two image paths, a minimum and maximum shape size,
 # and calculates the shapes in the images, saving them to separate folders.
 def calculate_subfs(image_path1, image_path2, min_shape_size, max_shape_size):
@@ -91,4 +94,4 @@ def detect_and_save_shapes(image_path, output_folder, min_shape_size, max_shape_
                     shape_name = "Circle"
 
                 # Generate a unique filename for the shape based on its type and count.
-                # shape_filename = os.path.join(output_)
+                # shape_filename = os
