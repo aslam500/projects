@@ -1,4 +1,4 @@
-#bard failed
+
 from vmaf import VmafModel
 
 model_path = 'path_to_vmaf_v0.6.1.pkl'
