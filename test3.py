@@ -33,8 +33,6 @@ def add_comments(file_path):
 
 
 if __name__ == "__main__":
-    # This code was originally intended for a push hook, but currently runs on commit
-    # add_comments_before_push(local_ref, local_sha, remote_ref, remote_sha)
     add_comments_before_commit()
 
 
