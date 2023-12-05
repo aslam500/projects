@@ -1,6 +1,6 @@
 import re
 import subprocess
-import os
+#import os
 
 def add_comments_before_commit():
     """
