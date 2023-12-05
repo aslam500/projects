@@ -1,19 +1,20 @@
 
+```python
 import cv2 as cv
 import os
 import shutil
 import sys
 import sys
-import ls
-# This function takes two image paths, a minimum and maximum shape size,
-# and calculates the shapes in the images, saving them to separate folders.
-def calculate_subfs(image_path1, image_path2, min_shape_size, max_shape_size):
 
+def calculate_subfs(image_path1, image_path2, min_shape_size, max_shape_size):
     # Define folders to store the reference and test image shapes.
+
     reference_output_folder = "reference_output_shapes"
     test_output_folder = "test_output_shapes"
 
     # Create the folders if they don't exist.
+    # This could be improved with a context manager to handle cleanup automatically.
+
     if not os.path.exists(reference_output_folder):
         os.makedirs(reference_output_folder)
 
@@ -30,6 +31,9 @@ def calculate_subfs(image_path1, image_path2, min_shape_size, max_shape_size):
     print("Shapes from reference and test images have been saved.")
 
     # Try to remove the temporary folders, but ignore errors if they already got removed.
+    # This could be improved with a context manager to handle cleanup automatically.
+    # Consider using `shutil.rmtree(folder, ignore_errors=True)` to avoid the try/except block.
+
     try:
         shutil.rmtree(reference_output_folder)
         shutil.rmtree(test_output_folder)
@@ -37,8 +41,6 @@ def calculate_subfs(image_path1, image_path2, min_shape_size, max_shape_size):
     except OSError as e:
         print(f"Error: {e}")
 
-# This function takes an image path, an output folder, and minimum and maximum shape size,
-# and detects and saves shapes found in the image.
 def detect_and_save_shapes(image_path, output_folder, min_shape_size, max_shape_size):
 
     # Create the output folder if it doesn't exist.
@@ -46,6 +48,8 @@ def detect_and_save_shapes(image_path, output_folder, min_shape_size, max_shape_
         os.makedirs(output_folder)
 
     # Read and pre-process the image.
+    # Consider using a function for image pre-processing.
+
     image = cv2.imread(image_path)
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     blurred = cv2.GaussianBlur(gray, (5, 5), 0)
@@ -77,6 +81,8 @@ def detect_and_save_shapes(image_path, output_folder, min_shape_size, max_shape_
             if len(roi) > 0:
 
                 # Determine the shape name based on the number of vertices.
+                # This could be improved with a dictionary or case statement.
+
                 if num_vertices == 3:
                     shape_name = "Triangle"
                 elif num_vertices == 4:
@@ -93,4 +99,4 @@ def detect_and_save_shapes(image_path, output_folder, min_shape_size, max_shape_
                 else:
                     shape_name = "Circle"
 
-                # Generate a unique filename
+                #
