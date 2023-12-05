@@ -1,96 +1,61 @@
-
-import cv2 as cv
-import os
 import shutil
-import sys
-import sys
-import ls
-# This function takes two image paths, a minimum and maximum shape size,
-# and calculates the shapes in the images, saving them to separate folders.
-def calculate_subfs(image_path1, image_path2, min_shape_size, max_shape_size):
+import logging
+import os
+def calculate_shapes(reference_image_path: str, test_image_path: str, min_shape_size: int, max_shape_size: int) -> None:
+    """
+    Calculates and saves the shapes found in two images.
 
-    # Define folders to store the reference and test image shapes.
-    reference_output_folder = "reference_output_shapes"
-    test_output_folder = "test_output_shapes"
+    Args:
+        reference_image_path: Path to the reference image.
+        test_image_path: Path to the test image.
+        min_shape_size: Minimum size of shapes to detect (in pixels).
+        max_shape_size: Maximum size of shapes to detect (in pixels).
+    """
 
-    # Create the folders if they don't exist.
-    if not os.path.exists(reference_output_folder):
-        os.makedirs(reference_output_folder)
+    reference_shapes_folder: str = "reference_output_shapes"
+    test_shapes_folder: str = "test_output_shapes"
 
-    if not os.path.exists(test_output_folder):
-        os.makedirs(test_output_folder)
+    os.makedirs(reference_shapes_folder, exist_ok=True)
+    os.makedirs(test_shapes_folder, exist_ok=True)
 
-    # Process the reference image and save the shapes.
-    detect_and_save_shapes(image_path1, reference_output_folder, min_shape_size, max_shape_size)
+    detect_and_save_shapes(reference_image_path, reference_shapes_folder, min_shape_size, max_shape_size)
+    detect_and_save_shapes(test_image_path, test_shapes_folder, min_shape_size, max_shape_size)
 
-    # Process the test image and save the shapes.
-    detect_and_save_shapes(image_path2, test_output_folder, min_shape_size, max_shape_size)
-
-    # Print a success message.
     print("Shapes from reference and test images have been saved.")
 
-    # Try to remove the temporary folders, but ignore errors if they already got removed.
     try:
-        shutil.rmtree(reference_output_folder)
-        shutil.rmtree(test_output_folder)
+        shutil.rmtree(reference_shapes_folder)
+        shutil.rmtree(test_shapes_folder)
         print("Output folders removed.")
     except OSError as e:
-        print(f"Error: {e}")
+        logging.error(f"Error removing folders: {e}")
 
-# This function takes an image path, an output folder, and minimum and maximum shape size,
-# and detects and saves shapes found in the image.
-def detect_and_save_shapes(image_path, output_folder, min_shape_size, max_shape_size):
+def detect_and_save_shapes(image_path: str, output_folder: str, min_shape_size: int, max_shape_size: int) -> None:
+    """
+    Detects and saves the shapes found in an image.
 
-    # Create the output folder if it doesn't exist.
-    if not os.path.exists(output_folder):
-        os.makedirs(output_folder)
+    Args:
+        image_path: Path to the image.
+        output_folder: Path to the folder where the shapes will be saved.
+        min_shape_size: Minimum size of shapes to detect (in pixels).
+        max_shape_size: Maximum size of shapes to detect (in pixels).
+    """
 
-    # Read and pre-process the image.
-    image = cv2.imread(image_path)
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    blurred = cv2.GaussianBlur(gray, (5, 5), 0)
-    edges = cv2.Canny(blurred, 50, 150)
+    os.makedirs(output_folder, exist_ok=True)
 
-    # Find contours in the image.
+    image: np.ndarray = cv2.imread(image_path)
+    gray: np.ndarray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    blurred: np.ndarray = cv2.GaussianBlur(gray, (5, 5), 0)
+    edges: np.ndarray = cv2.Canny(blurred, 50, 150)
+
     contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-    # Loop through each contour.
     for contour in contours:
+        epsilon: float = 0.04 * cv2.arcLength(contour, True)
 
-        # Calculate the perimeter approximation accuracy.
-        epsilon = 0.04 * cv2.arcLength(contour, True)
+        approx: np.ndarray = cv2.approxPolyDP(contour, epsilon, True)
+        num_vertices: int = len(approx)
 
-        # Simplify the contour and get the number of vertices.
-        approx = cv2.approxPolyDP(contour, epsilon, True)
-        num_vertices = len(approx)
-
-        # Get the bounding rectangle of the contour.
         x, y, w, h = cv2.boundingRect(contour)
 
-        # Check if the shape is within the specified size range.
-        if w >= min_shape_size and h >= min_shape_size and w <= max_shape_size and h <= max_shape_size:
-
-            # Extract the region of interest (ROI) from the original image.
-            roi = image[y:y + h, x:x + w]
-
-            # Skip if the ROI is empty.
-            if len(roi) > 0:
-
-                # Determine the shape name based on the number of vertices.
-                if num_vertices == 3:
-                    shape_name = "Triangle"
-                elif num_vertices == 4:
-                    # Calculate the aspect ratio to distinguish squares from rectangles.
-                    aspect_ratio = float(w) / h
-                    if aspect_ratio >= 0.95 and aspect_ratio <= 1.05:
-                        shape_name = "Square"
-                    else:
-                        shape_name = "Rectangle"
-                elif num_vertices == 5:
-                    shape_name = "Pentagon"
-                elif num_vertices == 6:
-                    shape_name = "Hexagon"
-                else:
-                    shape_name = "Circle"
-
-                # Generate a unique filename
+        if w >= min_shape_size and h >= min_shape_size and w <= max_shape_size and h <=
