@@ -1,6 +1,7 @@
 import shutil
 import logging
 import os
+import re
 def calculate_shapes(reference_image_path: str, test_image_path: str, min_shape_size: int, max_shape_size: int) -> None:
     """
     Calculates and saves the shapes found in two images.
