@@ -1,4 +1,4 @@
-## Import the Bard API library
+# Import the Bard API library
 #from bardapi import Bard
 import sys
 import random
