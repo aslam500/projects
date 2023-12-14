@@ -3,15 +3,6 @@ import logging
 import os
 import re
 def calculate_shapes(reference_image_path: str, test_image_path: str, min_shape_size: int, max_shape_size: int) -> None:
-    """
-    Calculates and saves the shapes found in two images.
-
-    Args:
-        reference_image_path: Path to the reference image.
-        test_image_path: Path to the test image.
-        min_shape_size: Minimum size of shapes to detect (in pixels).
-        max_shape_size: Maximum size of shapes to detect (in pixels).
-    """
 
     reference_shapes_folder: str = "reference_output_shapes"
     test_shapes_folder: str = "test_output_shapes"
@@ -32,15 +23,6 @@ def calculate_shapes(reference_image_path: str, test_image_path: str, min_shape_
         logging.error(f"Error removing folders: {e}")
 
 def detect_and_save_shapes(image_path: str, output_folder: str, min_shape_size: int, max_shape_size: int) -> None:
-    """
-    Detects and saves the shapes found in an image.
-
-    Args:
-        image_path: Path to the image.
-        output_folder: Path to the folder where the shapes will be saved.
-        min_shape_size: Minimum size of shapes to detect (in pixels).
-        max_shape_size: Maximum size of shapes to detect (in pixels).
-    """
 
     os.makedirs(output_folder, exist_ok=True)
 
