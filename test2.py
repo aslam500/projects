@@ -10,6 +10,7 @@ def function():
     This function prints a message to the console based on the value of the 'something' variable.
     """
     name = "aslam bin amzath"  # Variable to store the name
+    done = True
     another = "another name"
     something = False  # Variable to store a boolean value
 
